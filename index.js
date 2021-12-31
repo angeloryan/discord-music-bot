@@ -10,5 +10,22 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isCommand()) return;
+
+	const { commandName } = interaction;
+
+	if (commandName === 'ping') {
+		console.log('Pong!');
+		await interaction.reply('Pong!');
+	} else if (commandName === 'server') {
+		console.log('Interaction server!');
+		await interaction.reply(`Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`);
+	} else if (commandName === 'user') {
+		console.log('Interaction user!');
+		await interaction.reply(`Your tag: ${interaction.user.tag}\nYour id: ${interaction.user.id}`);
+	}
+});
+
 // Login to Discord with your client's token
 client.login(token);
