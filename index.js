@@ -3,7 +3,10 @@ const { token } = require('./config.json');
 const fs = require('fs');
 
 // Initializes a new client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+
+// Command message prefix
+const prefix = '>';
 
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -16,8 +19,16 @@ for (const file of commandFiles) {
 }
 // When the client is ready, run this code (only once)
 client.once('ready', () => {
-	console.log('Ready!');
+	console.log('Ready! Use > as a prefix to usher commands.');
 });
+
+// When the client sees a message, run this code
+client.on('messageCreate', message => {
+	if(!message.content.startsWith(prefix) || message.author.bot) return;
+	
+	const [command, argument] = message.content.substring(1, message.content.length).split(/\s+(.*)/);
+	message.channel.send('Your command: ' + command + '\nYour argument: ' + argument);
+})
 
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
